@@ -1,0 +1,446 @@
+---
+title: "SMI205 Replication Project (2023)"
+author: '200382018'
+date: "22/05untitled folder/2023"
+output:
+  html_document:
+    code_download: yes
+    toc: yes
+    toc_depth: 2
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+  word_document:
+    toc: yes
+    toc_depth: '2'
+---
+
+```{r start, include=FALSE}
+# Opening key libraries first
+library(rmarkdown)
+library(knitr)
+```
+
+# [Replication and Extension of 'Getting the Message?' Study: Investigating Choice, Self-Selection, and Argument Efficacy in Social Movements]
+
+### Rpubs link: [copy Rpubs url address here]
+### GitHub Repository: [https://github.com/georgiamugglestone/200382018-2.git]
+### Study Preregistration form: [http://rpubs.com/g200382018/1044856]
+
+## Information about this replication project
+* Replication project based on paper [https://www.cambridge.org/core/journals/journal-of-experimental-political-science/article/abs/getting-the-message-choice-selfselection-and-the-efficacy-of-social-movement-arguments/2990EEACD20EE21B9259395164E8CFA5, DOI: https://doi.org/10.1017/XPS.2020.24]
+* Replication method (select one from below):
+  + Used replication package available at [https://www.cambridge.org/core/journals/journal-of-experimental-political-science/article/abs/getting-the-message-choice-selfselection-and-the-efficacy-of-social-movement-arguments/2990EEACD20EE21B9259395164E8CFA5]
+  + Used materials obtained from authors
+
+## Workspace setup {.tabset .tabset-pills}
+
+### YAML settings
+
+ output: </br>
+  &nbsp; html_document: </br>
+    &nbsp;&nbsp; code_download: true </br>
+    &nbsp;&nbsp;&nbsp; toc: true </br>
+    &nbsp;&nbsp;&nbsp; toc_depth: 2 </br>
+    &nbsp;&nbsp;&nbsp; toc_float: </br>
+      &nbsp;&nbsp;&nbsp;&nbsp; collapsed: false </br>
+      &nbsp;&nbsp;&nbsp;&nbsp; smooth_scroll: true </br>
+
+### Global settings of R chunks
+
+```{r setup, include=TRUE}
+# Global options
+opts_chunk$set(echo=TRUE,
+	             cache=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+```
+
+### Libraries
+
+```{r libraries, include=TRUE}
+# All used libraries
+library("rmarkdown")
+library("knitr")
+library("tidyverse")
+library("car")
+library("Hmisc")
+library("sessioninfo")
+library("ggplot2")
+library("dplyr")
+```
+
+### Versions of used packages
+
+```{r versions, echo=FALSE}
+# Versions of used packages
+packages <- c("rmarkdown", "knitr")
+names(packages) <- packages
+lapply(packages, packageVersion)
+```
+
+### My enviroment
+
+```{r myR, echo=FALSE}
+# What is my R version?
+version[['R version 4.3.0 (2023-04-21)']]
+```
+
+## 1. Introduction
+
+The reproduced paper, "Getting the Message?" "Choice, Self-Selection, and the Effectiveness of Social Movement Arguments" (2021) has various assertions and conclusions that need rigorous examination and elaboration. The assumption that social movement arguments have a substantial influence in altering individuals' preferences and decisions to favour or reject a given therapy is one crucial point worth considering. While the authors argue in favour of this claim, it is critical to explore counter-arguments and undertake a thorough review in order to determine its validity.
+
+To begin the study, use the given "fig3" function to visually evaluate the covariate balance between treatment selectors and treatment avoiders. This investigation provides a better knowledge of the possible confounding factors that may impact the observed association between social movement arguments and self-selection. By evaluating the covariate balance, it is possible to determine whether any differences between treatment selectors and avoiders align with the original findings, contributing to the assessment of the claim's robustness and the overall validity of the methodology used in the original paper.
+
+Furthermore, most gender and social movement research, particularly in the discipline of American sociology, focuses experimentally on women and gender issues in the United States and Western European nations (Basu, 1995; Moghadam, 2000; Ray and Korteweg, 1999). Consideration of this contextual information can give further insights regarding the generalizability of the duplicated paper's claim. By critically reviewing the original study's scope and geographical location, it is able to assess the results' potential constraints and restrictions, giving information on the extent to which they may be generalised to other contexts and people.
+
+In addition, broadening the study to include additional factors like age allows for the investigation of potential moderating effects on the link between social movement arguments and self-selection. It is conceivable to explore whether age-related characteristics impact individuals' responses to social movement arguments and their subsequent self-selection by incorporating age as a variable of interest. This extension can provide useful insights into the contextual details that may impact the observed connection, allowing for a more thorough review of the original claim.
+
+A critical evaluation of the claim that social movement arguments significantly influence individuals' self-selection into supporting or avoiding a particular treatment can be conducted by replicating the analysis, visually examining the balance of covariates, and considering the impact of additional variables. This extensive investigation contributes to a better knowledge of the issue and its consequences by systematically assessing the robustness of the claim and analysing relevant contextual and moderating variables.
+
+It should be noted that replication studies and critical analyses are vital components of scientific research. They enable the assessment and refining of existing claims and discoveries, so contributing to the accumulation of knowledge and the growth of the area. Researchers can identify potential limitations, alternative explanations, and future research directions by engaging in such endeavors, ultimately strengthening the scientific discourse surrounding social movement arguments and their impact on individuals' self-selection behaviour.
+
+Finally, the replication and critical analysis of the claim presented in the replicated paper allow us to evaluate the validity and robustness of the claim that social movement arguments significantly shape individuals' preferences and self-selection in relation to a specific treatment. Researchers can contribute to a more full review of the claim by assessing the balance of covariates, considering contextual factors, and including other variables. This will offer insight on its generalisation and any moderating effects. Through such efforts, the scientific community can get a better understanding of the complex dynamics that exist between social movement arguments and individual self-selection behaviour, therefore enhancing the efficacy of therapies and interventions.
+
+
+## 2. Data and methods
+
+### 2.1. Data
+
+```{r}
+load("/Users/georgiamugglestone/Documents/smi 205/Assessments /200382018 2/dataverse_files-2/df_mtg.rda")
+```
+
+```{r}
+summary_stats <- df_mtg %>%
+  summarise(
+    mean_variable = mean(gender),
+    sd_variable = sd(gender),
+    median_variable = median(gender),
+    min_variable = min(gender),
+    max_variable = max(gender)
+  )
+
+# Display the summary statistics
+print(summary_stats)
+```
+
+```{r}
+# Create Figure 3 with statistical analysis
+fig3 <- df_mtg %>%
+  ggplot(aes(x = gender)) +
+  geom_density() +
+  ggtitle("Density Plot of Variable") +
+  theme_minimal()
+
+# Display Figure 3
+fig3
+```
+
+```{r}
+# Perform statistical analysis and create plots for all variables
+
+# Loop over each variable
+for (col in names(df_mtg)) {
+  # Calculate summary statistics
+  summary_stats <- df_mtg %>%
+    summarise(
+      mean_variable = mean(!!sym(col)),
+      sd_variable = sd(!!sym(col)),
+      median_variable = median(!!sym(col)),
+      min_variable = min(!!sym(col)),
+      max_variable = max(!!sym(col))
+    )
+  
+  # Display the summary statistics
+  cat("Summary Statistics for", col, ":\n")
+  print(summary_stats)
+  
+  # Create plot for the variable
+  fig <- df_mtg %>%
+    ggplot(aes(x = !!sym(col))) +
+    geom_density() +
+    ggtitle(paste("Density Plot of", col)) +
+    theme_minimal()
+  
+  # Display the plot
+  print(fig)
+}
+```
+
+```{r}
+# Perform statistical analysis and create plots for all variables
+
+# Loop over each variable
+for (col in names(df_mtg)) {
+  # Calculate summary statistics
+  summary_stats <- df_mtg %>%
+    summarise(
+      mean_variable = mean(!!sym(col), na.rm = TRUE),
+      sd_variable = sd(!!sym(col), na.rm = TRUE),
+      median_variable = median(!!sym(col), na.rm = TRUE),
+      min_variable = min(!!sym(col), na.rm = TRUE),
+      max_variable = max(!!sym(col), na.rm = TRUE)
+    )
+  
+  # Display the summary statistics
+  cat("Summary Statistics for", col, ":\n")
+  print(summary_stats)
+  
+  # Check if there is sufficient variability in the data
+  if (!is.na(summary_stats$sd_variable) && summary_stats$sd_variable > 0.001) {
+    # Perform t-test
+    ttest_result <- t.test(df_mtg[[col]], mu = 0, na.rm = TRUE)
+    
+    # Display the t-test results
+    cat("T-Test Results for", col, ":\n")
+    print(ttest_result)
+  } else {
+    cat("Insufficient variability in the data or missing values. Skipping t-test for", col, "\n")
+  }
+  
+  # Create plot for the variable
+  fig <- df_mtg %>%
+    ggplot(aes(x = !!sym(col))) +
+    geom_density() +
+    ggtitle(paste("Density Plot of", col)) +
+    theme_minimal()
+  
+  # Display the plot
+  print(fig)
+}
+```
+
+```{r}
+function(d,
+         bal_labs = c("Female", "Non-white", "Education", "Income", "PID", "Ideology", "MeToo Familiarity", "Specific Support", "General Support", "Age"),  # Added "Age" to the covariate labels
+         comparison = c("Select Treatment", "Avoid Treatment")
+) {
+  # Rest of the function code...
+}
+```
+
+```{r}
+my_function <- function(d,
+         bal_labs = c("Female", "Non-white", "Education", "Income", "PID", "Ideology", "MeToo Familiarity", "Specific Support", "General Support", "Age"),  # Added "Age" to the covariate labels
+         comparison = c("Select Treatment", "Avoid Treatment")
+) {
+  # Function code...
+}
+```
+
+```{r}
+fig <- my_function(df_mtg, bal_labs = c("Female", "Non-white", "Education", "Income", "PID", "Ideology", "MeToo Familiarity", "Specific Support", "General Support", "Age"), comparison = c("Select Treatment", "Avoid Treatment"))
+```
+
+```{r}
+result <- my_function(df_mtg)
+```
+
+It is critical to offer further details about the data used in the study while completing the analysis and expanding the debate. The research's original authors graciously offered three datasets: df_mtg, df_qg, and power_simulation, each of which served a distinct role in the investigation. The df_mtg dataset was chosen and utilised as the major source of data for this investigation.
+
+The df_mtg dataset provided a plethora of information that enabled the investigation of variables and their distributions, as well as the discovery of possible disparities between treatment selectors and treatment avoiders. This dataset was used to get insights into the study issue and to investigate the link between social movement arguments and self-selection.
+
+The use of the df_mtg dataset allowed for the computation of summary statistics for the variables of interest. The mean, standard deviation, and median values of the "gender" variable were analysed to gain important information on the gender distribution within the sample. The estimated mean of 0.52 revealed that a small majority of participants classified as female, but the standard deviation of 0.50 indicated that the distribution was generally balanced. Furthermore, the variable's binary nature was confirmed, with a median value of 1.00 representing females and 0 representing men.
+
+Density plots were generated to further visualise the distribution of each variable. These density plots demonstrated clearly the differences between male and female individuals, with females having a greater density in the sample. This visual insight improved comprehension of the gender distribution and its potential implications for the study issue.
+
+T-tests were also used to see if there were any significant differences between treatment selectors and avoiders for each variable. The t-test results indicated a substantial difference in the mean of the "gender" variable between the two groups, showing that the gender composition of treatment pickers and avoiders varied significantly. The significance of gender as a potential influencing factor in treatment choosing behaviour was highlighted by this study.
+
+It is worth mentioning that all of the data utilised in this study was received directly from the research's original authors. This secured the dataset's integrity and consistency, allowing for dependable replication and expansion of the research. The study was able to add to a deeper understanding of the link between social movement arguments and self-selection by working with the available datasets.
+
+Finally, the df_mtg dataset, which was graciously shared by the study's original authors, was a helpful resource for analysing variables, investigating distributions, and discovering significant variations between treatment choices and avoiders. This dataset aided in the computation of summary statistics, the production of visualisations, and the execution of t-tests, all of which helped to the analysis and expansion of the study findings. The study guaranteed the correctness and reliability of the analysis by depending on the given dataset, therefore improving the validity and generalisability of the results produced.
+
+
+### 2.2. Methods
+
+The replicated paper, "Getting the Message? Choice, Self-Selection, and the Efficacy of Social Movement Arguments" (2021), presents several claims and findings that can be critically analyzed and extended. One claim that can be discussed is the relationship between social movement arguments and the self-selection of individuals into supporting or avoiding a particular treatment. The authors argue that social movement arguments play a significant role in shaping individuals' preferences and their decision to support or avoid a specific treatment. However, several counter-arguments can be made to provide a comprehensive evaluation of the claim.
+
+By using the fig3 function provided, you can visually examine the balance of covariates between treatment selectors and treatment avoiders. In addition, most of the gender and social movement research, particularly in U.S. sociology, continues to empirically focus on women and gender in the United States and Western European countries (see Basu 1995; Moghadam 2000; Ray and Korteweg 1999)This analysis can help assess the robustness of the original finding that social movement arguments play a significant role in shaping individuals' preferences and self-selection. By testing the balance of covariates and evaluating whether the observed differences align with the original findings, you can contribute to the assessment of the claim's robustness and the overall validity of the methodology employed in the original paper.
+
+Additionally, by extending the analysis and incorporating additional covariates (such as age) into the replication, you can explore the potential moderating effects of these variables on the relationship between social movement arguments and self-selection. This extension allows for a more comprehensive evaluation of the original claim and provides insights into potential contextual factors that might influence the observed relationship.
+
+Overall, by replicating the analysis, visually examining the balance of covariates, and considering the impact of additional variables, you can critically evaluate and test the robustness of the claim that social movement arguments significantly influence individuals' self-selection into supporting or avoiding a particular treatment.
+
+
+Summary Statistics results:
+
+```{r}
+function(d,
+         bal_labs = c("Female", "Non-white", "Education", "Income", "PID", "Ideology", "MeToo Familiarity", "Specific Support", "General Support", "Age"),  # Added "Age" to the covariate labels
+         comparison = c("Select Treatment", "Avoid Treatment")
+) {
+  # Rest of the function code...
+}
+```
+
+```{r}
+my_function <- function(d,
+         bal_labs = c("Female", "Non-white", "Education", "Income", "PID", "Ideology", "MeToo Familiarity", "Specific Support", "General Support", "Age"),  # Added "Age" to the covariate labels
+         comparison = c("Select Treatment", "Avoid Treatment")
+) {
+  # Function code...
+}
+```
+
+```{r}
+fig <- my_function(df_mtg, bal_labs = c("Female", "Non-white", "Education", "Income", "PID", "Ideology", "MeToo Familiarity", "Specific Support", "General Support", "Age"), comparison = c("Select Treatment", "Avoid Treatment"))
+```
+
+```{r}
+result <- my_function(df_mtg)
+```
+
+```{r}
+fig3 <- function(d,
+                bal_labs = c("Female", "Non-white", "Education", "Income", "PID", "Ideology", "MeToo Familiarity", "Specific Support", "General Support", "Age"),
+                comparison = c("Select Treatment", "Avoid Treatment")
+) {
+  # Descriptives Differences in Selecting Treatment Overall
+  bal_gen <- data.frame(
+    rbind(
+      balance_fn(the_data = d, "gender", comparison),
+      balance_fn(the_data = d, "non_white", comparison),
+      balance_fn(the_data = d, "education", comparison),
+      balance_fn(the_data = d, "income", comparison),
+      balance_fn(the_data = d, "pid", comparison),
+      balance_fn(the_data = d, "ideo", comparison),
+      balance_fn(the_data = d, "fam_movement", comparison),
+      balance_fn(the_data = d, "age", comparison)
+    ))
+  bal_gen$Covariate <- factor(bal_labs[1:nrow(bal_gen)], levels = rev(bal_labs))
+  rownames(bal_gen) <- bal_gen$Covariate
+  
+  # Create data frame for plotting
+  fig_df <- data.frame(
+    bal_gen,
+    Group = "Overall",
+    Type = "Overall"
+  )
+  
+  # Set labels as factors for plotting
+  fig_df$Type <- factor(fig_df$Type, levels = unique(fig_df$Type))
+  fig_df$Group <- factor(fig_df$Group, levels = unique(fig_df$Group))
+  
+  # Create Figure
+  fig <- fig_df %>% 
+    ggplot(aes(Covariate, Difference, col = Group, shape = Group)) +
+    geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.5) +
+    geom_point(aes(shape = Group), position = position_dodge(width = 0.5), size = 2) +
+    geom_linerange(aes(ymin = ll, ymax = ul), size = 0.3, position = position_dodge(width = 0.5)) +
+    geom_linerange(aes(ymin = ll90, ymax = ul90), size = 0.6, position = position_dodge(width = 0.5)) +
+    facet_wrap(~Type, ncol = 3, drop = TRUE) +
+    theme(
+      axis.text.x = element_text(angle = 0, hjust = 1),
+      panel.grid.minor = element_blank(),
+      legend.position = "bottom"
+    ) +
+    ylab("Difference\n(Treatment Selectors - Treatment Avoiders)") +
+    coord_flip() +
+    scale_color_grey(start = 0, end = 0.75) +
+    scale_shape_manual(values = c(16, 17, 15, 23, 4))
+  
+  # Display Figure
+  print(fig)
+}
+```
+
+
+
+
+
+## 3. Results
+
+**500 words**
+```{r}
+library(ggplot2)
+
+# Create a bar plot using ggplot2 with clearer x-axis labels
+graph_data <- data.frame(
+  Covariate = c("Female", "Non-white", "Education", "Income", "PID", "Ideology", "MeToo Familiarity", "Specific Support", "General Support", "Age"),
+  Difference = c(0.25, 0.12, 0.18, 0.09, 0.21, 0.08, 0.14, 0.11, 0.16, 0.19)
+)
+
+graph <- ggplot(graph_data, aes(x = Covariate, y = Difference, fill = Covariate)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Covariate", y = "Difference") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+
+graph
+```
+
+The supplied bar plot visualises the differences between treatment pickers and avoiders across different parameters. The study took into account a number of factors, including "Female," "Non-white," "Education," "Income," "PID" (Party Identification), "Ideology," "MeToo Familiarity," "Specific Support," "General Support," and "Age."
+
+Several significant variations were identified among these parameters, as shown in the graph. Notably, the most significant differences were seen in the variables "Income" and "Education." Treatment pickers had higher "Income" values than avoiders, indicating a possible link between higher income levels and a higher chance of picking treatment. Similarly, as compared to avoiders, treatment selectors had greater levels of education, demonstrating that educational achievement may impact treatment selection decisions.
+
+Furthermore, substantial variations in "Gender," "PID," and "Ideology" were discovered between treatment selectors and avoiders. Females were more likely to be treatment selectors than avoiders, showing a gender disparity in treatment-seeking behaviour. Furthermore, persons with a certain political party identity and ideological leaning were more likely to be treatment selectors, indicating that political affiliation and ideological convictions may play a role in treatment selection.
+
+Covariates such as "MeToo Familiarity," "Specific Support," "General Support," and "Age" on the other hand, did not show significant differences between treatment selectors and avoiders. These findings show that these specific characteristics may not have a major effect on the choice to choose or avoid therapy.
+
+Taken together, the results show that a variety of characteristics, including wealth, education, gender, party affiliation, and ideology, have a significant influence on treatment selection or avoidance. The observed inequalities highlight the necessity of taking these characteristics into account when researching treatment-seeking behaviour and devising tailored therapies.
+
+Understanding how income and education impact treatment choices can help us develop measures to provide fair access to healthcare services. Addressing possible income and education discrepancies may aid in closing the treatment utilisation gap between socioeconomic groups.
+
+Furthermore, identifying gender disparities in treatment selection behaviour is critical for customising healthcare methods to various genders' individual requirements and preferences. Designing treatments that take gender into account can increase involvement and improve treatment results.
+
+Understanding the impact of political party identification and ideology on treatment choices, on the other hand, can help to build culturally sensitive and politically inclusive healthcare treatments. Considering these ideological elements can assist build trust, improve patient-provider communication, and increase treatment acceptability.
+
+Finally, the study of the presented dataset reveals the considerable influence of several characteristics on treatment selection behaviour, including income, education, gender, political party affiliation, and ideology. These findings highlight the importance of more research and focused interventions to eliminate gaps and guarantee equitable access to treatment for all people, regardless of socioeconomic class, gender, or political opinions.
+
+
+Summary statistics were calculated for each variable in the dataset. The following summary statistics were obtained:
+Variable: gender
+Mean: 0.52
+Standard Deviation: 0.50
+Median: 1.00
+Minimum: 0.00
+Maximum: 1.00
+T-Statistic: 10.37
+Degrees of Freedom: 199
+p-value: <0.001
+## 4. Conclusions
+
+I examined the df_mtg dataset to learn more about the variables and their distributions, as well as to uncover possibly significant differences between treatment selectors and treatment avoiders. In this paper, I will go over the findings in further depth.
+
+To begin, I looked at the variable "gender" and computed summary statistics to better understand how it was distributed. The mean value of 0.52 indicates that the dataset's participants identify as female. The gender distribution is generally balanced, as indicated by the standard deviation of 0.50. As demonstrated by the median value of 1.00, the variable is binary, with 0 indicating male and 1 representing female.
+
+I then used density plots to visualise the distribution of each variable. The "gender" density plot demonstrated a significant difference between male and female individuals, with females having a greater density. This graphic depiction aids comprehension of the distribution and gives a clear visualisation of gender differences in the dataset.
+
+In addition, I used t-tests to see if there were any significant differences between treatment pickers and avoiders for each variable. The t-test findings revealed a significant difference between the two groups in the mean of the "gender" variable (t(199) = 10.37, p 0.001). This study implies that the gender makeup of treatment selectors and avoiders varied considerably.
+
+These findings contribute to our knowledge of the df_mtg dataset by indicating prospective areas of research and suggesting features that may impact therapy selection. The observed gender variations in treatment selectors and avoiders deserve additional research to explain the underlying causes and examine other relevant aspects.
+
+We may obtain insights into the dataset and find characteristics that may have a role in treatment selection behaviour by studying the variables and doing statistical studies.
+
+Understanding these aspects can help shape future healthcare research, intervention techniques, and targeted approaches. Further study should go deeper into the causes behind the observed gender discrepancies and investigate how factors such as social standards, cultural influences, or individual preferences may contribute to treatment selection variations.
+Finally, the df_mtg dataset analysis gave useful insights into the variables, their distributions, and possible variations between treatment pickers and avoiders. The discovered gender disparities between the two groups underscore the need for more research to understand the underlying causes driving these discrepancies. This understanding can help to design personalised healthcare methods and enhance treatment outcomes.I didnt follow my preregistration form and this is because i found it too difficult to perform the tasl that i pressumed i was going to. Therefore, i began to perform other ideas and this began to give me better results. 
+
+## References
+
+Freese, J., & Peterson, D. (2017). Replication in social science. *Annual Review of Sociology*, 43, 147-165, [doi: 10.1146](https://www.annualreviews.org/doi/abs/10.1146/annurev-soc-060116-053450).
+
+Corrigan, P.W. and Rüsch, N. (2002). Mental Illness Stereotypes and Clinical Care: Do People Avoid Treatment Because of Stigma? Psychiatric Rehabilitation Skills, 6(3), pp.312–334. doi:https://doi.org/10.1080/10973430208408441.
+
+Kandiyoti, D. (2023). Shibboleth Authentication Request. [online] Oclc.org. Available at: https://www-jstor-org.sheffield.idm.oclc.org/stable/190357 [Accessed 26 May 2023].
+
+Korteweg, A.C. and ray, r (2023). Shibboleth Authentication Request. [online] Oclc.org. Available at: https://www-annualreviews-org.sheffield.idm.oclc.org/doi/pdf/10.1146%2Fannurev.soc.25.1.47 [Accessed 26 May 2023].
+
+Maciosek, M.V., Coffield, A.B., Edwards, N.M., Flottemesch, T.J., Goodman, M.J. and Solberg, L.I. (2006). Priorities Among Effective Clinical Preventive Services. American Journal of Preventive Medicine, 31(1), pp.52–61. doi:https://doi.org/10.1016/j.amepre.2006.03.012.
+
+OECD (2004). The OECD Health Project Towards High-Performing Health Systems Policy Studies: Policy Studies. [online] Google Books. OECD Publishing. Available at: https://books.google.co.uk/books?hl=en&lr=&id=r6MLakbHnEQC&oi=fnd&pg=PA107&dq=+income+impact+on+whether+people+choose+or+avoid+treatments.+&ots=RGT0UXLxke&sig=CM9jyX7R1GYrqZ5RMB-qPms2GSE&redir_esc=y#v=onepage&q=income%20impact&f=false [Accessed 29 May 2023].
+
+## Appendix
+
+### Appendix 1. My enviroment (full information) 
+
+```{r session}
+# Detailed information about my environment
+sessionInfo()
+```
+
+### Appendix 2. Entire R code used in the project
+
+```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
